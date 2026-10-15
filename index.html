@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<title>Gabriel Mosca Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Data and business analyst projects by Gabriel Mosca, Business Technology Management student at Toronto Metropolitan University.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column. Name and pitch up top, then each project as a case-study row: facts on the left, story on the right. Stacks on phones. */
+:root{
+  --bg:#F4F6F5; --surface:#FFFFFF; --ink:#142019; --muted:#56645C; --line:#D9E0DC;
+  --accent:#1E6B52; --accent-soft:#DDEEE6; --mark:#9A6414;
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-data:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1513; --surface:#161E1B; --ink:#E3EAE6; --muted:#93A39A; --line:#26312C;
+  --accent:#5CC29A; --accent-soft:#16302A; --mark:#E2B04A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1513; --surface:#161E1B; --ink:#E3EAE6; --muted:#93A39A; --line:#26312C;
+  --accent:#5CC29A; --accent-soft:#16302A; --mark:#E2B04A; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+.page{max-width:1040px;margin:0 auto;padding-block:56px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:72px}
+a{color:var(--accent);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+.eyebrow{font:500 12px/1 var(--f-data);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+/* intro */
+.intro{display:grid;gap:20px;max-width:46rem}
+.intro h1{font-size:clamp(44px,8vw,76px);line-height:.95;font-weight:800;letter-spacing:-.03em}
+.intro h1 span{color:var(--accent)}
+.pitch{font-size:21px;line-height:1.5;margin:0;max-width:40rem}
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:15px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:8px;font:500 13px var(--f-data);color:var(--ink);background:var(--accent-soft);padding:6px 12px;border-radius:99px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.contact{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.mail{font:500 15px var(--f-data);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;user-select:all;overflow-wrap:anywhere}
+.btn{font:600 15px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--muted)}
+.btn.solid{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.btn.solid:hover{filter:brightness(1.08)}
+
+/* projects */
+.projects{display:grid;gap:28px}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.sec-head h2{font-size:30px;font-weight:700;letter-spacing:-.01em}
+.project{display:grid;grid-template-columns:240px minmax(0,1fr);gap:20px 40px;padding-block:28px;border-bottom:1px solid var(--line)}
+.project:last-child{border-bottom:0}
+.facts{display:grid;gap:14px;align-content:start;margin:0}
+.facts div{display:grid;gap:2px}
+.facts dt{font:500 11px var(--f-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:0;font-size:15px;line-height:1.4}
+.story{display:grid;gap:16px;min-width:0}
+.story h3{font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.lead{margin:0;font-size:19px;max-width:38rem}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px}
+.parts h4{margin:0 0 4px;font:600 13px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--mark)}
+.parts p,.parts ul{margin:0;font-size:16px;color:var(--ink)}
+.parts ul{padding-left:18px}
+.parts li+li{margin-top:2px}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tool{font:500 12.5px var(--f-data);border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);background:var(--surface)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.note{font-size:14px;color:var(--muted)}
+
+/* skills */
+.skills{display:grid;gap:20px}
+.skill-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.skill-grid h3{font:600 13px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.skill-grid p{margin:0;font-size:16px}
+
+footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+.toast{font-size:14px;color:var(--accent);min-height:1.4em}
+
+@media (max-width:760px){
+  .page{gap:56px;padding-block:36px 40px}
+  .project{grid-template-columns:minmax(0,1fr)}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .parts{grid-template-columns:minmax(0,1fr)}
+  .skill-grid{grid-template-columns:minmax(0,1fr)}
+  .pitch{font-size:19px}
+}
+@media (prefers-reduced-motion:no-preference){.btn{transition:border-color .15s,filter .15s}}
+</style>
+</head>
+<body>
+
+
+<div class="page">
+  <header class="intro">
+    <div class="eyebrow">Portfolio · Toronto</div>
+    <h1>Gabriel Mosca<span>.</span></h1>
+    <p class="pitch">Business Technology Management student at Toronto Metropolitan University. I build dashboards and small tools that turn messy numbers into clear decisions.</p>
+    <div class="status">
+      <span class="pill"><i></i>Open to analyst roles</span>
+      <span>Data, business, BI and reporting analyst · Graduating 2027</span>
+    </div>
+    <div class="contact">
+      <span class="mail" id="mail">gabrielmosca123@gmail.com</span>
+      <button type="button" class="btn" id="copyMail">Copy email</button>
+      <!-- Add your links here once you have them:
+      <a class="btn" href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="btn" href="https://github.com/YOUR-USERNAME" target="_blank" rel="noopener">GitHub ↗</a>
+      -->
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+  </header>
+
+  <section class="projects" aria-labelledby="projects-h">
+    <div class="sec-head"><h2 id="projects-h">Projects</h2><span class="eyebrow">3 projects · each runs in your browser</span></div>
+
+    <article class="project" id="maple-bean">
+      <dl class="facts">
+        <div><dt>Type</dt><dd>Sales dashboard</dd></div>
+        <div><dt>Data</dt><dd>Simulated sales for a fictional café, Jul–Sep 2026</dd></div>
+        <div><dt>Built with</dt><dd>Python, D3.js, HTML/CSS · AI-assisted with Claude</dd></div>
+        <div><dt>Built</dt><dd>October 2026</dd></div>
+      </dl>
+      <div class="story">
+        <h3>Maple &amp; Bean Q3 Dashboard</h3>
+        <p class="lead">A one-page sales review that tells a small café owner when to staff up, what sells, and which price to look at first.</p>
+        <div class="parts">
+          <div><h4>The problem</h4><p>A café owner had a quarter of sales and a cost sheet, but no quick way to see busy periods or which menu items earn the least per sale.</p></div>
+          <div><h4>What I built</h4><p>A Python script cleans the sales and sums them by month, week, weekday, hour and menu item, then joins the cost sheet to work out margins. The dashboard shows totals, trends and a margin table.</p></div>
+          <div><h4>What it shows</h4><ul><li>Data cleaning and aggregation</li><li>KPI design: revenue, gross profit, orders, average order</li><li>Margin analysis that flags items under 70%</li></ul></div>
+          <div><h4>The takeaway</h4><p>The page leads with one plain-language recommendation, built from the data, so the owner knows what to act on without reading every chart.</p></div>
+        </div>
+        <div class="tools"><span class="tool">Python</span><span class="tool">CSV</span><span class="tool">D3.js</span><span class="tool">KPIs</span><span class="tool">Margin analysis</span></div>
+        <div class="actions"><a class="btn solid" href="projects/maple-bean/index.html">Open the dashboard →</a></div>
+      </div>
+    </article>
+
+    <article class="project" id="replay-log">
+      <dl class="facts">
+        <div><dt>Type</dt><dd>Trading journal web app</dd></div>
+        <div><dt>Data</dt><dd>Sessions the user enters. The demo can load sample sessions.</dd></div>
+        <div><dt>Built with</dt><dd>JavaScript, HTML/CSS, SVG charts · AI-assisted with Claude</dd></div>
+        <div><dt>Built</dt><dd>October 2026</dd></div>
+      </dl>
+      <div class="story">
+        <h3>Replay Log</h3>
+        <p class="lead">A journal for futures practice sessions that scores each one against prop-firm evaluation rules.</p>
+        <div class="parts">
+          <div><h4>The problem</h4><p>Practice sessions in TradingView's replay mode produce stats that are easy to lose and hard to compare from one week to the next.</p></div>
+          <div><h4>What I built</h4><p>An app that logs trades, win rate, profit factor, P&amp;L and drawdown for each session, checks it against a profit target and loss limits, and charts the trend. It can also read the numbers from a screenshot of the stats panel.</p></div>
+          <div><h4>What it shows</h4><ul><li>Metric design, like win rate weighted by trade count</li><li>Rule-based pass and fail flags</li><li>Filters by setup and tag, plus CSV export for Excel</li></ul></div>
+          <div><h4>Why it matters</h4><p>It turns a pile of one-off results into a record that shows whether a strategy is actually improving.</p></div>
+        </div>
+        <div class="tools"><span class="tool">JavaScript</span><span class="tool">SVG charts</span><span class="tool">CSV export</span><span class="tool">Rules engine</span></div>
+        <div class="actions"><a class="btn solid" href="projects/replay-log/index.html">Open the app →</a></div>
+      </div>
+    </article>
+
+    <article class="project" id="parlay-lab">
+      <dl class="facts">
+        <div><dt>Type</dt><dd>Expected-value calculator</dd></div>
+        <div><dt>Data</dt><dd>Prices and estimates the user enters. The demo can load an example.</dd></div>
+        <div><dt>Built with</dt><dd>JavaScript, HTML/CSS · AI-assisted with Claude</dd></div>
+        <div><dt>Built</dt><dd>September 2026</dd></div>
+      </dl>
+      <div class="story">
+        <h3>Parlay Lab</h3>
+        <p class="lead">A probability tool that checks whether a multi-leg bet has positive expected value, and how much to risk if it does.</p>
+        <div class="parts">
+          <div><h4>The problem</h4><p>Listed odds include the bookmaker's margin, so the real probability behind a price is hidden, and combining several legs hides it further.</p></div>
+          <div><h4>What I built</h4><p>A calculator that removes the margin to find a fair probability for each leg, compares it with the user's own estimate, and combines legs into expected value per $100.</p></div>
+          <div><h4>What it shows</h4><ul><li>Probability and expected-value modelling</li><li>Risk sizing with a quarter-Kelly stake</li><li>Flags when an assumption breaks, such as two legs from one game</li></ul></div>
+          <div><h4>Why it matters</h4><p>The same thinking applies to any decision under uncertainty: compare your estimate with the market's, size the risk, and track whether you were right.</p></div>
+        </div>
+        <div class="tools"><span class="tool">JavaScript</span><span class="tool">Probability</span><span class="tool">Expected value</span><span class="tool">Kelly sizing</span></div>
+        <div class="actions"><a class="btn solid" href="projects/parlay-lab/index.html">Open the calculator →</a></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="skills" aria-labelledby="skills-h">
+    <div class="sec-head"><h2 id="skills-h">Skills in these projects</h2></div>
+    <div class="skill-grid">
+      <div><h3>Analysis</h3><p>KPI design, margin analysis, trend and pattern analysis, probability and expected value</p></div>
+      <div><h3>Data work</h3><p>Cleaning and aggregating raw data with Python, joining sources, exporting CSV for Excel</p></div>
+      <div><h3>Communication</h3><p>Dashboards and charts that lead with a clear takeaway, built for people who are not analysts</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Gabriel Mosca · Toronto, Ontario</span>
+    <span>Updated October 2026</span>
+  </footer>
+</div>
+
+<script>
+document.getElementById('copyMail').addEventListener('click', async () => {
+  const t = document.getElementById('toast'), text = document.getElementById('mail').textContent.trim();
+  try { await navigator.clipboard.writeText(text); t.textContent = 'Email copied'; }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('mail'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    t.textContent = 'Email selected. Press Ctrl+C to copy.';
+  }
+  clearTimeout(window.__tt); window.__tt = setTimeout(() => t.textContent = '', 3000);
+});
+</script>
+
+</body>
+</html>

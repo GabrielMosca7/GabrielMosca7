@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maple &amp; Bean Q3 Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+:root{
+  --font-anthropic-sans:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --font-anthropic-serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --color-bg:#F5F4F0; --color-panel:#FFFFFF; --color-fg:#1D1B18; --color-fg-muted:#6B665E; --color-border-line:#E2DED6;
+  --color-ok:#2E7D4F; --color-bad:#B3412F; --color-warn:#A86A0B; --accent:#2F5E8C;
+  --cds-font-size-title:30px; --cds-font-size-heading:17px; --cds-font-size-body:15px; --cds-font-size-caption:13px; --cds-font-weight-medium:600;
+  --cds-gap-xs:4px; --cds-gap-sm:8px; --cds-gap-md:16px; --cds-gap-lg:24px;
+  --cds-pad-xs:5px; --cds-pad-sm:8px; --cds-pad-lg:18px; --cds-radius:10px;
+  --cds-surface-popover:#FFFFFF; --cds-border:#E2DED6; --cds-shadow-popover:0 4px 16px rgba(0,0,0,.12); --cds-text-secondary:#6B665E;
+  --cds-chart-grid:#ECE9E3; --cds-chart-muted:#C9C4BA; --cds-dur-slow:.3s;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --color-bg:#141413; --color-panel:#1E1D1B; --color-fg:#ECE9E3; --color-fg-muted:#A39E95; --color-border-line:#33312D;
+  --color-ok:#5DBB86; --color-bad:#E5826F; --color-warn:#E0A84A; --accent:#7FAEDC;
+  --cds-surface-popover:#262522; --cds-border:#3A3833; --cds-text-secondary:#A39E95; --cds-chart-grid:#2A2926; --cds-chart-muted:#55524C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --color-bg:#141413; --color-panel:#1E1D1B; --color-fg:#ECE9E3; --color-fg-muted:#A39E95; --color-border-line:#33312D;
+  --color-ok:#5DBB86; --color-bad:#E5826F; --color-warn:#E0A84A; --accent:#7FAEDC;
+  --cds-surface-popover:#262522; --cds-border:#3A3833; --cds-text-secondary:#A39E95; --cds-chart-grid:#2A2926; --cds-chart-muted:#55524C; color-scheme:dark}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--color-bg);color:var(--color-fg);font:15px/1.5 var(--font-anthropic-sans)}
+#dash-root{max-width:1100px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.dash-skeleton{color:var(--color-fg-muted)}
+.mb .card{overflow-x:auto}
+.nodata{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:14px;color:var(--color-fg-muted)}
+</style>
+</head>
+<body>
+<style>
+.pfbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;background:#142019;color:#E3EAE6;font:14px/1.4 "Segoe UI",system-ui,-apple-system,sans-serif;padding-block:10px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.pfbar a{color:#E3EAE6;font-weight:600;text-decoration:none}
+.pfbar a:hover{text-decoration:underline}
+.pfbar span{color:#A9B8B0;flex:1 1 220px}
+.pfbar-btn{font:600 13px/1 "Segoe UI",system-ui,sans-serif;color:#5CC29A;background:transparent;border:1px solid #5CC29A;border-radius:6px;padding:7px 12px;cursor:pointer}
+.pfbar-btn:hover{background:#16302A}
+.pfbar a:focus-visible,.pfbar-btn:focus-visible{outline:2px solid #5CC29A;outline-offset:2px}
+</style>
+<div class="pfbar"><a href="../../index.html">&larr; Gabriel Mosca &middot; Portfolio</a><span>Simulated data for a fictional café, July to September 2026.</span></div>
+
+<div id="dash-root">
+<div class="nodata" id="nodata" hidden>The data files for this dashboard haven't been added yet, so the charts are empty.</div>
+<style>
+.mb { font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.mb h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0 0 var(--cds-gap-xs); }
+.mb .lede { color: var(--color-fg-muted); font-size: var(--cds-font-size-body); margin: 0 0 var(--cds-gap-lg); max-width: 60rem; }
+.mb .lede b { color: var(--color-fg); font-weight: 600; }
+.mb .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-lg); }
+.mb .card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.mb .tile .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.mb .tile .big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; margin: var(--cds-gap-xs) 0; min-height: 1.3em; }
+.mb .tile .chg { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.mb .up { color: var(--color-ok); } .mb .down { color: var(--color-bad); }
+.mb .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
+.mb h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.mb .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-md); }
+.mb .chart { position: relative; min-height: 220px; }
+.mb .tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; display: none; z-index: 2; }
+.mb .tip .k { color: var(--cds-text-secondary); }
+.mb table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.mb th { text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+.mb td { text-align: right; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+.mb th:first-child, .mb td:first-child { text-align: left; }
+.mb .barcell { display: flex; align-items: center; gap: var(--cds-gap-sm); justify-content: flex-end; }
+.mb .barcell span.bar { display: inline-block; height: 8px; border-radius: 4px; background: var(--cds-chart-muted); }
+.mb .lowm { color: var(--color-warn); }
+.mb .wide { grid-column: 1 / -1; }
+.mb .failed { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: 220px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.mb .failed::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.mb [data-dash-source-state=empty] { color: transparent; }
+.mb [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+@media (max-width: 520px) { .mb .hide-narrow { display: none; } }
+</style>
+
+<div class="mb">
+  <h1 id="top">Maple &amp; Bean café — Q3 2026 sales</h1>
+  <p class="lede" id="takeaway">
+    <span class="dash-skeleton">Loading the quarter…</span>
+  </p>
+
+  <div class="tiles" id="kpis">
+    <div class="card tile"><div class="lbl">Revenue · Jul–Sep</div>
+      <div class="big dash-skeleton" data-source="q3" data-field="Revenue" data-row="0">—</div>
+      <div class="chg">Sep vs Aug <span data-source="q3" data-field="Rev_chg_pct" data-row="0">—</span></div></div>
+    <div class="card tile"><div class="lbl">Gross profit · Jul–Sep</div>
+      <div class="big dash-skeleton" data-source="q3" data-field="Gross_Profit" data-row="0">—</div>
+      <div class="chg">Margin <span data-source="q3" data-field="Margin_pct" data-row="0">—</span></div></div>
+    <div class="card tile"><div class="lbl">Orders · Jul–Sep</div>
+      <div class="big dash-skeleton" data-source="q3" data-field="Orders" data-row="0">—</div>
+      <div class="chg">Sep vs Aug <span data-source="q3" data-field="Orders_chg_pct" data-row="0">—</span></div></div>
+    <div class="card tile"><div class="lbl">Average order · Jul–Sep</div>
+      <div class="big dash-skeleton" data-source="q3" data-field="Avg_Order" data-row="0">—</div>
+      <div class="chg">Revenue ÷ orders</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card wide" id="weekly-card">
+      <h2>Weekly revenue</h2>
+      <p class="note">Revenue after refunds, by week starting Monday. The first and last weeks are partial (quarter starts Wed Jul 1, ends Wed Sep 30), shown lighter.</p>
+      <div class="chart" id="weekly-chart" data-source="weekly"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card" id="weekday-card">
+      <h2>Busiest days</h2>
+      <p class="note">Average revenue per day, by day of week.</p>
+      <div class="chart" id="weekday-chart" data-source="weekday"></div>
+    </div>
+    <div class="card" id="hourly-card">
+      <h2>Busiest hours</h2>
+      <p class="note">Average revenue per day in each hour (7am–5pm).</p>
+      <div class="chart" id="hourly-chart" data-source="hourly"></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card wide" id="items-card">
+      <h2>Menu items</h2>
+      <p class="note">Gross margin = (revenue − ingredient cost) ÷ revenue, using the owner's cost sheet. Margins under 70% in amber.</p>
+      <table id="items-table" data-source="items" data-row-key="Item">
+        <thead><tr>
+          <th data-field="Item">Item</th>
+          <th data-field="Category" class="hide-narrow">Category</th>
+          <th data-field="Qty">Units sold</th>
+          <th data-field="Revenue">Revenue</th>
+          <th data-field="Margin_pct">Margin</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card wide" id="monthly-card">
+      <h2>Month by month</h2>
+      <p class="note">Ingredient cost (COGS) only. Rent, wages and other overheads aren't in this data.</p>
+      <table id="monthly-table" data-source="monthly" data-row-key="Month">
+        <thead><tr>
+          <th data-field="Month">Month</th>
+          <th data-field="Revenue">Revenue</th>
+          <th data-field="COGS" class="hide-narrow">Ingredient cost</th>
+          <th data-field="Gross_Profit">Gross profit</th>
+          <th data-field="Orders">Orders</th>
+          <th data-field="Avg_Order" class="hide-narrow">Avg order</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<script src="d3.min.js"></script>
+<script>
+/* Small stand-in for the dashboard runtime: loads the CSVs in data/ and runs the page's drawing code. */
+(function(){
+  var FILES = { monthly:'data/monthly.csv', weekly:'data/weekly.csv', weekday:'data/weekday.csv', hourly:'data/hourly.csv', items:'data/items.csv' };
+  var state = {}, calcs = {}, subs = [];
+  Object.keys(FILES).forEach(function(id){ state[id] = { status:'loading', data:[], columns:[] }; });
+  function runCalcs(){
+    Object.keys(calcs).forEach(function(id){
+      var c = calcs[id], ins = c.inputs.map(function(i){ return state[i]; });
+      if (ins.every(function(s){ return s && s.status === 'ok'; })) {
+        try { var out = c.fn.apply(null, ins.map(function(s){ return s.data; })); state[id] = { status:'ok', data: Array.isArray(out) ? out : [out], columns:[] }; }
+        catch(e){ state[id] = { status:'error', data:[], message:String(e) }; }
+      } else if (ins.some(function(s){ return s && s.status === 'error'; })) state[id] = { status:'error', data:[] };
+      else state[id] = { status:'loading', data:[] };
+    });
+  }
+  function emit(){ runCalcs(); subs.forEach(function(fn){ try{ fn(); }catch(e){ console.error(e); } }); }
+  window.dash = {
+    colors: ['var(--accent)','#C0703A','#4F8A5B','#8A5BA8','#B8A03A','#3A8A8A','#A84F6B','#6B7A8A'],
+    data: function(id){ return state[id] || { status:'missing', data:[] }; },
+    calc: function(id, o){ calcs[id] = o; state[id] = { status:'loading', data:[] }; },
+    onData: function(fn){ subs.push(fn); fn(); },
+    loader: function(){}, refresh: function(){}, params: function(){ return {}; }, setParams: function(){}, resetParams: function(){}, setLink: function(){}
+  };
+  window.__dashLoad = function(){
+    var failed = 0;
+    Promise.all(Object.keys(FILES).map(function(id){
+      return fetch(FILES[id]).then(function(r){ if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function(t){ var rows = d3.csvParse(t); state[id] = { status:'ok', data: rows, columns: rows.columns }; })
+        .catch(function(){ failed++; state[id] = { status:'error', data:[] }; });
+    })).then(function(){ if (failed) document.getElementById('nodata').hidden = false; emit(); });
+    var t; window.addEventListener('resize', function(){ clearTimeout(t); t = setTimeout(emit, 150); });
+  };
+})();
+</script>
+<script>
+dash.calc('q3', {
+  title: 'Quarter totals',
+  description: 'Sums the three months, and compares September with August.',
+  inputs: ['monthly'],
+  fn: (monthly) => {
+    const n = (r, k) => Number(r[k]);
+    const sum = (k) => monthly.reduce((s, r) => s + n(r, k), 0);
+    const rev = sum('Revenue'), gp = sum('Gross_Profit'), orders = sum('Orders');
+    const sep = monthly.find(r => r.Month === '2026-09'), aug = monthly.find(r => r.Month === '2026-08');
+    return [{
+      Revenue: rev, Gross_Profit: gp, Orders: orders,
+      Avg_Order: rev / orders, Margin_pct: gp / rev * 100,
+      Rev_chg_pct: (n(sep, 'Revenue') / n(aug, 'Revenue') - 1) * 100,
+      Orders_chg_pct: (n(sep, 'Orders') / n(aug, 'Orders') - 1) * 100,
+    }];
+  }
+});
+
+(function () {
+  const money = d3.format('$,.0f'), money2 = d3.format('$,.2f'), count = d3.format(','), pct1 = (v) => d3.format('.1f')(v) + '%';
+  const signed = (v) => (v >= 0 ? '+' : '−') + d3.format('.1f')(Math.abs(v)) + '%';
+  const muted = 'var(--color-fg-muted)';
+
+  function failed(el) { el.innerHTML = ''; const d = document.createElement('div'); d.className = 'failed'; d.textContent = 'Failed to load'; el.appendChild(d); }
+
+  function barChart(el, rows, opt) {
+    el.innerHTML = '';
+    const W = el.clientWidth || 600, H = 220, m = { t: 8, r: 8, b: 26, l: 8 };
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`);
+    const y = d3.scaleLinear([0, d3.max(rows, d => d.v) * 1.08], [H - m.b, m.t]);
+    // measure widest y tick label
+    const ticks = y.ticks(4);
+    const probe = svg.append('text').attr('font-size', 11).text(opt.yfmt(ticks[ticks.length - 1]));
+    m.l = probe.node().getComputedTextLength() + 10; probe.remove();
+    const x = d3.scaleBand(rows.map(d => d.k), [m.l, W - m.r]).padding(0.25);
+    const g = svg.append('g');
+    g.selectAll('line.grid').data(ticks).join('line').attr('x1', m.l).attr('x2', W - m.r)
+      .attr('y1', d => y(d)).attr('y2', d => y(d)).attr('stroke', 'var(--cds-chart-grid)');
+    g.selectAll('text.yt').data(ticks).join('text').attr('x', m.l - 6).attr('y', d => y(d)).attr('dy', '0.32em')
+      .attr('text-anchor', 'end').attr('font-size', 11).attr('fill', muted).text(opt.yfmt);
+    const bw = Math.min(32, x.bandwidth());
+    const tip = d3.select(el).append('div').attr('class', 'tip');
+    g.selectAll('rect').data(rows).join('rect')
+      .attr('x', d => x(d.k) + (x.bandwidth() - bw) / 2).attr('width', bw)
+      .attr('y', d => y(Math.max(0, d.v))).attr('height', d => Math.max(0, y(0) - y(d.v))).attr('rx', 4)
+      .attr('fill', d => d.color)
+      .on('mousemove', (ev, d) => {
+        const [px, py] = d3.pointer(ev, el);
+        tip.style('display', 'block').html('');
+        tip.append('div').attr('class', 'k').text(d.label);
+        tip.append('div').text(opt.tipfmt(d.v) + (d.extra || ''));
+        const tw = tip.node().offsetWidth;
+        tip.style('left', Math.min(Math.max(0, px - tw / 2), W - tw) + 'px').style('top', Math.max(0, py - 52) + 'px');
+      })
+      .on('mouseleave', () => tip.style('display', 'none'));
+    // x labels, thinned so they never collide
+    const labels = rows.map(d => d.xl);
+    const probe2 = svg.append('text').attr('font-size', 11).text(labels.reduce((a, b) => a.length > b.length ? a : b, ''));
+    const lw = probe2.node().getComputedTextLength() + 8; probe2.remove();
+    const every = Math.max(1, Math.ceil(lw / x.step()));
+    g.selectAll('text.xt').data(rows.filter((d, i) => i % every === 0)).join('text')
+      .attr('x', d => x(d.k) + x.bandwidth() / 2).attr('y', H - 8).attr('text-anchor', 'middle')
+      .attr('font-size', 11).attr('fill', muted).text(d => d.xl);
+  }
+
+  dash.onData(() => {
+    // ---- tiles ----
+    const q = dash.data('q3');
+    const tileVals = document.querySelectorAll('#kpis [data-source="q3"]');
+    if (q.status === 'ok' && q.data.length) {
+      const r = q.data[0];
+      const f = { Revenue: money, Gross_Profit: money, Orders: count, Avg_Order: money2, Margin_pct: pct1, Rev_chg_pct: signed, Orders_chg_pct: signed };
+      tileVals.forEach(el => {
+        const k = el.dataset.field; el.classList.remove('dash-skeleton');
+        el.textContent = f[k](r[k]);
+        if (k.endsWith('chg_pct')) el.className = r[k] >= 0 ? 'up' : 'down';
+      });
+    } else {
+      tileVals.forEach(el => { el.textContent = '—'; if (el.classList.contains('big')) el.classList.add('dash-skeleton'); });
+    }
+
+    // ---- weekly ----
+    const wk = dash.data('weekly'), wel = document.getElementById('weekly-chart');
+    if (wk.status === 'ok') {
+      const fmtD = d3.utcFormat('%b %-d');
+      const rows = wk.data.map(r => {
+        const start = new Date(r.Week + 'T00:00:00Z'), end = d3.utcDay.offset(start, 6);
+        const partial = r.Week < '2026-07-01' || d3.utcFormat('%Y-%m-%d')(end) > '2026-09-30';
+        return { k: r.Week, v: Number(r.Revenue), xl: fmtD(start), label: 'Week of ' + fmtD(start) + (partial ? ' (partial)' : ''),
+                 color: partial ? 'var(--cds-chart-muted)' : dash.colors[0] };
+      });
+      barChart(wel, rows, { yfmt: d3.format('$,.0s'), tipfmt: money });
+    } else if (wk.status === 'error') failed(wel); else wel.innerHTML = '';
+
+    // ---- weekday ----
+    const wd = dash.data('weekday'), del = document.getElementById('weekday-chart');
+    let topDay = null;
+    if (wd.status === 'ok') {
+      const maxV = d3.max(wd.data, r => Number(r.Avg_Daily_Revenue));
+      const rows = wd.data.map(r => {
+        const v = Number(r.Avg_Daily_Revenue); if (v === maxV) topDay = r;
+        return { k: r.Weekday, v, xl: r.Weekday.slice(0, 3), label: r.Weekday, color: v === maxV ? dash.colors[0] : 'var(--cds-chart-muted)' };
+      });
+      barChart(del, rows, { yfmt: d3.format('$,.0f'), tipfmt: (v) => money(v) + ' a day' });
+    } else if (wd.status === 'error') failed(del); else del.innerHTML = '';
+
+    // ---- hourly ----
+    const hr = dash.data('hourly'), hel = document.getElementById('hourly-chart');
+    let topHour = null;
+    const hlabel = (h) => { h = Number(h); return (h % 12 || 12) + (h < 12 ? 'am' : 'pm'); };
+    if (hr.status === 'ok') {
+      const maxV = d3.max(hr.data, r => Number(r.Avg_Revenue_per_Day));
+      const rows = hr.data.map(r => {
+        const v = Number(r.Avg_Revenue_per_Day); if (v === maxV) topHour = r;
+        return { k: r.Hour, v, xl: hlabel(r.Hour), label: hlabel(r.Hour) + '–' + hlabel(Number(r.Hour) + 1), color: v === maxV ? dash.colors[0] : 'var(--cds-chart-muted)' };
+      });
+      barChart(hel, rows, { yfmt: d3.format('$,.0f'), tipfmt: (v) => money(v) + ' a day' });
+    } else if (hr.status === 'error') failed(hel); else hel.innerHTML = '';
+
+    // ---- items table ----
+    const it = dash.data('items'), tb = document.querySelector('#items-table tbody');
+    tb.innerHTML = '';
+    let lowest = null, topItem = null;
+    if (it.status === 'ok') {
+      const maxRev = d3.max(it.data, r => Number(r.Revenue));
+      it.data.forEach((r, i) => {
+        if (i === 0) topItem = r;
+        if (!lowest || Number(r.Margin_pct) < Number(lowest.Margin_pct)) lowest = r;
+        const tr = document.createElement('tr');
+        const td = (txt, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = txt; tr.appendChild(c); return c; };
+        td(r.Item); td(r.Category, 'hide-narrow'); td(count(Number(r.Qty)));
+        const rc = document.createElement('td'); const wrap = document.createElement('div'); wrap.className = 'barcell';
+        const bar = document.createElement('span'); bar.className = 'bar'; bar.style.width = (Number(r.Revenue) / maxRev * 70) + 'px';
+        const t = document.createElement('span'); t.textContent = money(Number(r.Revenue));
+        wrap.appendChild(bar); wrap.appendChild(t); rc.appendChild(wrap); tr.appendChild(rc);
+        td(pct1(Number(r.Margin_pct)), Number(r.Margin_pct) < 70 ? 'lowm' : '');
+        tb.appendChild(tr);
+      });
+    }
+
+    // ---- monthly table ----
+    const mo = dash.data('monthly'), mb = document.querySelector('#monthly-table tbody');
+    mb.innerHTML = '';
+    if (mo.status === 'ok') {
+      mo.data.forEach(r => {
+        const tr = document.createElement('tr');
+        [r.Month, money(Number(r.Revenue)), money(Number(r.COGS)), money(Number(r.Gross_Profit)), count(Number(r.Orders)), money2(Number(r.Avg_Order))]
+          .forEach((v, i) => { const c = document.createElement('td'); c.textContent = v; if (i === 2 || i === 5) c.className = 'hide-narrow'; tr.appendChild(c); });
+        mb.appendChild(tr);
+      });
+    }
+
+    // ---- takeaway ----
+    const tk = document.getElementById('takeaway');
+    tk.innerHTML = '';
+    if (topDay && topHour && topItem && lowest) {
+      const span = (txt, src, field, whereCol, whereVal) => {
+        const b = document.createElement('b'); b.textContent = txt;
+        b.setAttribute('data-source', src); b.setAttribute('data-field', field);
+        b.setAttribute('data-where', whereCol + '=' + encodeURIComponent(whereVal)); return b;
+      };
+      const txt = (s) => document.createTextNode(s);
+      tk.append(txt('Staff the '), span(topDay.Weekday, 'weekday', 'Weekday', 'Weekday', topDay.Weekday),
+        txt(' rush and the '), span(hlabel(topHour.Hour), 'hourly', 'Hour', 'Hour', topHour.Hour),
+        txt(' peak. '), span(topItem.Item, 'items', 'Item', 'Item', topItem.Item),
+        txt(' brings in the most money; '), span(lowest.Item, 'items', 'Item', 'Item', lowest.Item),
+        txt(' has the thinnest margin, so it is the first price to review.'));
+    } else {
+      const s = document.createElement('span'); s.className = 'dash-skeleton'; s.textContent = 'Loading the quarter…'; tk.appendChild(s);
+    }
+  });
+})();
+</script>
+
+<script>window.__dashLoad();</script>
+</body>
+</html>

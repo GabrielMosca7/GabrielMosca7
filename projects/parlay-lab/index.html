@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parlay Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16202e;
+  --ink-2:#44546b;
+  --ink-3:#7d8ba0;
+  --paper:#f2f0eb;
+  --card:#ffffff;
+  --rule:#d9d5cc;
+  --edge:#0f7b6c;
+  --edge-soft:#e2f1ee;
+  --loss:#a63a2b;
+  --loss-soft:#f7e6e3;
+  --warn:#8a6a12;
+  --warn-soft:#f6eed6;
+  --accent:#1f4f8f;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --ink:#e8e6e1;
+    --ink-2:#a7b1c0;
+    --ink-3:#74808f;
+    --paper:#11161e;
+    --card:#19202a;
+    --rule:#2c3644;
+    --edge:#4fbfa8;
+    --edge-soft:#12302c;
+    --loss:#e08a7a;
+    --loss-soft:#331f1c;
+    --warn:#d6b25c;
+    --warn-soft:#2e2718;
+    --accent:#7fa9e0;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e8e6e1;
+  --ink-2:#a7b1c0;
+  --ink-3:#74808f;
+  --paper:#11161e;
+  --card:#19202a;
+  --rule:#2c3644;
+  --edge:#4fbfa8;
+  --edge-soft:#12302c;
+  --loss:#e08a7a;
+  --loss-soft:#331f1c;
+  --warn:#d6b25c;
+  --warn-soft:#2e2718;
+  --accent:#7fa9e0;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Archivo,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px; line-height:1.5;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:820px;margin:0 auto;padding:22px 16px 64px}
+h1{font-size:1.55rem;font-weight:700;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--ink-2);font-size:.9rem;margin:0 0 4px;max-width:60ch}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+.verdict{
+  margin:20px 0 18px;padding:18px;border-radius:10px;
+  background:var(--card);border:1px solid var(--rule);
+  border-left:5px solid var(--ink-3);
+}
+.verdict.good{border-left-color:var(--edge);background:var(--edge-soft)}
+.verdict.bad{border-left-color:var(--loss);background:var(--loss-soft)}
+.verdict h2{margin:0 0 6px;font-size:1.1rem;font-weight:600}
+.verdict p{margin:0;font-size:.9rem;color:var(--ink-2)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:14px}
+.stat{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:11px 12px}
+.stat .k{font-size:.72rem;color:var(--ink-3);margin-bottom:3px}
+.stat .v{font-size:1.25rem;font-weight:600;letter-spacing:-.01em}
+
+.leg{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px;margin-bottom:12px}
+.leg.flagged{border-color:var(--loss)}
+.legtop{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.legtop input[type=text]{flex:1;min-width:0}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px}
+label{display:block;font-size:.73rem;color:var(--ink-3);margin-bottom:3px}
+input,select,button,textarea{font-family:inherit;font-size:.92rem;color:var(--ink)}
+input,select{
+  width:100%;padding:8px 9px;border:1px solid var(--rule);border-radius:6px;
+  background:var(--paper);
+}
+input[type=number],input[inputmode]{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+.readout{
+  display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:11px;padding-top:10px;
+  border-top:1px dashed var(--rule);font-size:.8rem;color:var(--ink-2)
+}
+.readout b{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--ink)}
+.tag{display:inline-block;padding:1px 7px;border-radius:99px;font-size:.72rem;font-weight:600}
+.tag.pos{background:var(--edge-soft);color:var(--edge)}
+.tag.neg{background:var(--loss-soft);color:var(--loss)}
+
+button{
+  cursor:pointer;border:1px solid var(--rule);background:var(--card);
+  border-radius:6px;padding:9px 14px;font-weight:500;
+}
+button:hover{border-color:var(--ink-3)}
+.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.icon{border:none;background:none;color:var(--ink-3);padding:4px 7px;font-size:1.05rem;line-height:1}
+.icon:hover{color:var(--loss)}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0}
+
+.note{
+  margin-top:11px;padding:10px 12px;border-radius:7px;font-size:.82rem;
+  background:var(--warn-soft);color:var(--warn);border:1px solid var(--rule)
+}
+.section-h{font-size:1rem;font-weight:600;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:left;color:var(--ink-3);font-weight:500;font-size:.73rem;padding:6px 8px 6px 0}
+td{padding:8px 8px 8px 0;border-top:1px solid var(--rule);font-family:'IBM Plex Mono',monospace}
+td.name{font-family:Archivo,sans-serif}
+.empty{color:var(--ink-3);font-size:.85rem;padding:14px 0}
+details{margin-top:24px;font-size:.87rem;color:var(--ink-2)}
+summary{cursor:pointer;color:var(--ink);font-weight:500}
+details p{max-width:66ch}
+.overflow{overflow-x:auto}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<style>
+.pfbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;background:#142019;color:#E3EAE6;font:14px/1.4 "Segoe UI",system-ui,-apple-system,sans-serif;padding-block:10px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.pfbar a{color:#E3EAE6;font-weight:600;text-decoration:none}
+.pfbar a:hover{text-decoration:underline}
+.pfbar span{color:#A9B8B0;flex:1 1 220px}
+.pfbar-btn{font:600 13px/1 "Segoe UI",system-ui,sans-serif;color:#5CC29A;background:transparent;border:1px solid #5CC29A;border-radius:6px;padding:7px 12px;cursor:pointer}
+.pfbar-btn:hover{background:#16302A}
+.pfbar a:focus-visible,.pfbar-btn:focus-visible{outline:2px solid #5CC29A;outline-offset:2px}
+</style>
+<div class="pfbar"><a href="../../index.html">&larr; Gabriel Mosca &middot; Portfolio</a><span>Demo. Load an example, or enter your own prices. Nothing is sent anywhere.</span><button type="button" id="pfExample" class="pfbar-btn">Load example parlay</button></div>
+
+<div class="wrap">
+
+<h1>Parlay Lab</h1>
+<p class="sub">Enter each leg with the book's price and your own honest read. The math tells you whether the parlay is worth placing — and how much to risk if it is.</p>
+
+<div class="verdict" id="verdict">
+  <h2 id="vTitle">Add a leg to begin</h2>
+  <p id="vBody">Every parlay starts as a losing bet. Your only path to profit is legs where your estimated probability beats the book's true price.</p>
+  <div class="grid">
+    <div class="stat"><div class="k">Parlay price</div><div class="v mono" id="sPrice">—</div></div>
+    <div class="stat"><div class="k">Book's true odds</div><div class="v mono" id="sBook">—</div></div>
+    <div class="stat"><div class="k">Your odds</div><div class="v mono" id="sYou">—</div></div>
+    <div class="stat"><div class="k">Edge per $100</div><div class="v mono" id="sEv">—</div></div>
+    <div class="stat"><div class="k">Suggested stake</div><div class="v mono" id="sKelly">—</div></div>
+    <div class="stat"><div class="k">Pays</div><div class="v mono" id="sPayout">—</div></div>
+  </div>
+  <div class="note" id="corrNote" style="display:none"></div>
+</div>
+
+<div class="row">
+  <label style="margin:0;font-size:.8rem;color:var(--ink-2)">Bankroll
+    <input class="mono" id="bankroll" type="number" value="500" min="1" style="width:110px;margin-left:6px;display:inline-block">
+  </label>
+  <label style="margin:0;font-size:.8rem;color:var(--ink-2)">Odds format
+    <select id="fmt" style="width:auto;display:inline-block;margin-left:6px">
+      <option value="american">American</option>
+      <option value="decimal">Decimal</option>
+    </select>
+  </label>
+</div>
+
+<div id="legs"></div>
+
+<div class="row">
+  <button class="primary" id="addLeg">Add leg</button>
+  <button id="saveBet">Log this bet</button>
+  <button id="clearAll">Clear legs</button>
+</div>
+
+<div class="section-h">Your record</div>
+<div id="record" class="empty">No logged bets yet. Log a parlay to start tracking whether your estimates hold up.</div>
+<div class="overflow"><table id="logTable" style="display:none">
+  <thead><tr><th>Bet</th><th>Legs</th><th>Price</th><th>Edge</th><th>Stake</th><th>Result</th><th></th></tr></thead>
+  <tbody id="logBody"></tbody>
+</table></div>
+
+<details>
+  <summary>How the math works</summary>
+  <p><b>Removing the vig.</b> A book's listed price implies a probability higher than the real one — that gap is their margin. If you enter the opposing side's price too, the app splits the two implied probabilities so they sum to 100%, which strips out the vig and reveals the book's genuine estimate. Without the other side, it assumes a typical 4.5% two-way margin, which is a rough guess.</p>
+  <p><b>Edge.</b> Your estimate minus the no-vig probability. Positive means you think the book is wrong in your favour. This number is only as good as your estimate — that's the hard part, and no app can do it for you.</p>
+  <p><b>Expected value.</b> Your combined probability multiplied by the payout, minus the chance of losing your stake. Negative EV means that over many repetitions of this exact bet you lose money, however good it feels.</p>
+  <p><b>Stake sizing.</b> Quarter-Kelly: a quarter of the mathematically optimal fraction. Full Kelly is correct only if your probability estimates are perfect, which they never are, so fractional Kelly protects you from your own overconfidence.</p>
+  <p><b>Correlation.</b> Multiplying probabilities assumes legs are independent. Two legs from the same game rarely are — "over 2.5 goals" and "both teams to score" move together. Books know this and price same-game parlays with extra margin, so the app flags them rather than pretending the math is clean.</p>
+</details>
+
+<p class="sub" style="margin-top:26px;font-size:.78rem;color:var(--ink-3)">A calculator, not a tipster. It has no odds feed and no opinion about who wins — it only checks your own numbers for internal consistency. Sports betting carries real financial risk, and parlays carry more of it than single bets.</p>
+
+</div>
+
+<script>
+var legs = [], nextId = 1, log = [];
+
+function toDec(v, fmt){
+  v = parseFloat(v);
+  if(!isFinite(v)) return NaN;
+  if(fmt === 'decimal') return v > 1 ? v : NaN;
+  if(v >= 100) return 1 + v/100;
+  if(v <= -100) return 1 + 100/Math.abs(v);
+  return NaN;
+}
+function toAm(d){
+  if(!isFinite(d) || d <= 1) return '—';
+  return d >= 2 ? '+' + Math.round((d-1)*100) : '\u2212' + Math.round(100/(d-1));
+}
+function pct(x){ return isFinite(x) ? (x*100).toFixed(1) + '%' : '—'; }
+function money(x){ return (x < 0 ? '\u2212$' : '$') + Math.abs(x).toFixed(2); }
+
+function calcLeg(L){
+  var fmt = document.getElementById('fmt').value;
+  var d = toDec(L.odds, fmt);
+  var opp = L.opp !== '' ? toDec(L.opp, fmt) : NaN;
+  var imp = isFinite(d) ? 1/d : NaN;
+  var fair, est = false;
+  if(isFinite(imp) && isFinite(opp)){
+    fair = imp / (imp + 1/opp);
+  } else if(isFinite(imp)){
+    fair = imp / 1.045; est = true;
+  } else { fair = NaN; }
+  var p = parseFloat(L.p);
+  p = isFinite(p) ? Math.min(Math.max(p/100, 0), 1) : NaN;
+  return {dec:d, imp:imp, fair:fair, fairEst:est, p:p, edge:(isFinite(p)&&isFinite(fair)) ? p - fair : NaN};
+}
+
+function render(){
+  var host = document.getElementById('legs');
+  host.innerHTML = '';
+  legs.forEach(function(L, i){
+    var c = calcLeg(L);
+    var div = document.createElement('div');
+    div.className = 'leg' + (isFinite(c.edge) && c.edge < 0 ? ' flagged' : '');
+    div.innerHTML =
+      '<div class="legtop">' +
+        '<input type="text" data-f="name" placeholder="Leg ' + (i+1) + ' — e.g. Aston Villa to win" value="' + esc(L.name) + '">' +
+        '<button class="icon" data-del="1" aria-label="Remove leg">\u00d7</button>' +
+      '</div>' +
+      '<div class="fields">' +
+        '<div><label>Your price</label><input inputmode="text" data-f="odds" placeholder="+130" value="' + esc(L.odds) + '"></div>' +
+        '<div><label>Other side</label><input inputmode="text" data-f="opp" placeholder="optional" value="' + esc(L.opp) + '"></div>' +
+        '<div><label>Your win chance %</label><input inputmode="decimal" data-f="p" placeholder="55" value="' + esc(L.p) + '"></div>' +
+        '<div><label>Game</label><input type="text" data-f="game" placeholder="e.g. COV-AVL" value="' + esc(L.game) + '"></div>' +
+      '</div>' +
+      '<div class="readout">' +
+        '<span>Book implies <b>' + pct(c.imp) + '</b></span>' +
+        '<span>True price <b>' + pct(c.fair) + '</b>' + (c.fairEst ? ' <span style="color:var(--ink-3)">(estimated)</span>' : '') + '</span>' +
+        '<span>You say <b>' + pct(c.p) + '</b></span>' +
+        (isFinite(c.edge) ? '<span class="tag ' + (c.edge >= 0 ? 'pos' : 'neg') + '">' + (c.edge >= 0 ? '+' : '\u2212') + Math.abs(c.edge*100).toFixed(1) + ' pts</span>' : '') +
+      '</div>';
+    div.querySelectorAll('input').forEach(function(inp){
+      inp.addEventListener('input', function(){ L[inp.dataset.f] = inp.value; summarize(); flagLeg(div, L); });
+    });
+    div.querySelector('[data-del]').addEventListener('click', function(){
+      legs.splice(i,1); render(); summarize();
+    });
+    host.appendChild(div);
+  });
+  summarize();
+}
+function flagLeg(div, L){
+  var c = calcLeg(L);
+  div.className = 'leg' + (isFinite(c.edge) && c.edge < 0 ? ' flagged' : '');
+  var r = div.querySelector('.readout');
+  if(r) r.innerHTML =
+    '<span>Book implies <b>' + pct(c.imp) + '</b></span>' +
+    '<span>True price <b>' + pct(c.fair) + '</b>' + (c.fairEst ? ' <span style="color:var(--ink-3)">(estimated)</span>' : '') + '</span>' +
+    '<span>You say <b>' + pct(c.p) + '</b></span>' +
+    (isFinite(c.edge) ? '<span class="tag ' + (c.edge >= 0 ? 'pos' : 'neg') + '">' + (c.edge >= 0 ? '+' : '\u2212') + Math.abs(c.edge*100).toFixed(1) + ' pts</span>' : '');
+}
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(m){
+  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m]; }); }
+
+function summary(){
+  var D = 1, pAll = 1, fairAll = 1, n = 0, worst = null;
+  legs.forEach(function(L){
+    var c = calcLeg(L);
+    if(!isFinite(c.dec) || !isFinite(c.p)) return;
+    n++; D *= c.dec; pAll *= c.p; fairAll *= c.fair;
+    if(isFinite(c.edge) && (worst === null || c.edge < worst.edge)) worst = {edge:c.edge, name:L.name || 'a leg'};
+  });
+  if(!n) return null;
+  var ev = pAll * (D-1) - (1-pAll);
+  var k = (pAll*D - 1) / (D-1);
+  return {n:n, D:D, p:pAll, fair:fairAll, ev:ev, kelly:k/4, worst:worst};
+}
+
+function summarize(){
+  var s = summary();
+  var v = document.getElementById('verdict');
+  var set = function(id,t){ document.getElementById(id).textContent = t; };
+  var bank = parseFloat(document.getElementById('bankroll').value) || 0;
+
+  var games = {}, dupes = [];
+  legs.forEach(function(L){
+    var g = (L.game||'').trim().toLowerCase();
+    if(!g) return;
+    games[g] = (games[g]||0) + 1;
+    if(games[g] === 2) dupes.push(L.game.trim());
+  });
+  var cn = document.getElementById('corrNote');
+  if(dupes.length){
+    cn.style.display = 'block';
+    cn.textContent = 'Legs from the same game (' + dupes.join(', ') + ') move together, so the combined probability below is unreliable. Books also add margin to same-game parlays — treat this number as optimistic.';
+  } else { cn.style.display = 'none'; }
+
+  if(!s){
+    v.className = 'verdict';
+    set('vTitle','Add a leg to begin');
+    set('vBody',"Every parlay starts as a losing bet. Your only path to profit is legs where your estimated probability beats the book's true price.");
+    ['sPrice','sBook','sYou','sEv','sKelly','sPayout'].forEach(function(id){ set(id,'—'); });
+    return;
+  }
+  set('sPrice', toAm(s.D) + '  (' + s.D.toFixed(2) + ')');
+  set('sBook', pct(s.fair));
+  set('sYou', pct(s.p));
+  set('sEv', money(s.ev*100));
+  var stake = s.kelly > 0 ? bank * s.kelly : 0;
+  set('sKelly', s.kelly > 0 ? money(stake) : 'Pass');
+  set('sPayout', stake > 0 ? money(stake * (s.D-1)) : money(100*(s.D-1)) + ' per $100');
+
+  if(s.ev > 0){
+    v.className = 'verdict good';
+    set('vTitle', 'Playable — ' + (s.ev*100).toFixed(1) + '% edge');
+    set('vBody', 'Your estimates give this parlay a ' + pct(s.p) + ' chance against a true price of ' + pct(s.fair) + '. That holds only if your read on each leg is genuinely better than the market\u2019s. Risk ' + money(stake) + ' at most.');
+  } else {
+    v.className = 'verdict bad';
+    var w = s.worst && s.worst.edge < 0 ? ' The weakest leg is ' + s.worst.name + ', where you\u2019re giving up ' + Math.abs(s.worst.edge*100).toFixed(1) + ' points.' : '';
+    set('vTitle', 'Skip it — losing ' + money(Math.abs(s.ev*100)) + ' per $100');
+    set('vBody', 'Your own numbers say this parlay loses money over time.' + w + ' Cut that leg, or find a better price elsewhere.');
+  }
+}
+
+function addLeg(){ legs.push({id:nextId++, name:'', odds:'', opp:'', p:'', game:''}); render(); }
+
+document.getElementById('addLeg').addEventListener('click', addLeg);
+document.getElementById('clearAll').addEventListener('click', function(){ legs = []; render(); });
+document.getElementById('bankroll').addEventListener('input', summarize);
+document.getElementById('fmt').addEventListener('change', render);
+
+/* ---- bet log ---- */
+function loadLog(){
+  try{ var raw = localStorage.getItem('parlaylab.log'); log = raw ? JSON.parse(raw) : []; }
+  catch(e){ log = []; }
+  if(!Array.isArray(log)) log = [];
+  renderLog();
+}
+function saveLog(){
+  try{ localStorage.setItem('parlaylab.log', JSON.stringify(log)); }catch(e){}
+}
+document.getElementById('saveBet').addEventListener('click', function(){
+  var s = summary();
+  if(!s){ alert('Add at least one complete leg first.'); return; }
+  var bank = parseFloat(document.getElementById('bankroll').value) || 0;
+  log.unshift({
+    t: Date.now(),
+    name: (legs.map(function(L){ return L.name; }).filter(Boolean)[0] || 'Parlay') + (s.n > 1 ? ' +' + (s.n-1) : ''),
+    n: s.n, D: s.D, ev: s.ev,
+    stake: s.kelly > 0 ? +(bank*s.kelly).toFixed(2) : 0,
+    result: 'open'
+  });
+  saveLog(); renderLog();
+});
+function renderLog(){
+  var body = document.getElementById('logBody'), tbl = document.getElementById('logTable'), rec = document.getElementById('record');
+  if(!log.length){ tbl.style.display='none'; rec.className='empty';
+    rec.textContent='No logged bets yet. Log a parlay to start tracking whether your estimates hold up.'; return; }
+  tbl.style.display='table'; body.innerHTML='';
+  var w=0,l=0,staked=0,ret=0;
+  log.forEach(function(b,i){
+    if(b.result==='won'){ w++; staked+=b.stake; ret+=b.stake*b.D; }
+    if(b.result==='lost'){ l++; staked+=b.stake; }
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td class="name">'+esc(b.name)+'</td><td>'+b.n+'</td><td>'+toAm(b.D)+'</td><td>'+
+      (b.ev>=0?'+':'\u2212')+Math.abs(b.ev*100).toFixed(1)+'%</td><td>'+money(b.stake)+'</td>'+
+      '<td><select data-i="'+i+'" style="width:auto;padding:3px 5px;font-size:.78rem">'+
+      ['open','won','lost'].map(function(o){return '<option'+(b.result===o?' selected':'')+'>'+o+'</option>';}).join('')+
+      '</select></td><td><button class="icon" data-rm="'+i+'" aria-label="Delete">\u00d7</button></td>';
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('select').forEach(function(s){
+    s.addEventListener('change',function(){ log[+s.dataset.i].result=s.value; saveLog(); renderLog(); });
+  });
+  body.querySelectorAll('[data-rm]').forEach(function(b){
+    b.addEventListener('click',function(){ log.splice(+b.dataset.rm,1); saveLog(); renderLog(); });
+  });
+  var settled=w+l;
+  rec.className='';
+  rec.innerHTML = settled
+    ? '<span class="mono" style="font-size:1.05rem;font-weight:600">'+w+'\u2013'+l+'</span> settled. Staked <b class="mono">'+money(staked)+
+      '</b>, returned <b class="mono">'+money(ret)+'</b> \u2014 net <b class="mono" style="color:'+((ret-staked)>=0?'var(--edge)':'var(--loss)')+'">'+
+      money(ret-staked)+'</b>. Small samples say very little; judge yourself over 100+ bets, not 10.'
+    : '<span style="color:var(--ink-3);font-size:.85rem">Mark bets won or lost as they settle to build your record.</span>';
+}
+
+loadLog();
+addLeg();
+</script>
+<script>
+document.getElementById('pfExample').addEventListener('click', function(){
+  document.getElementById('fmt').value = 'american';
+  legs = [
+    {id:nextId++, name:'Example: Raptors moneyline', odds:'+120', opp:'-140', p:'48', game:'TOR-BOS'},
+    {id:nextId++, name:'Example: Leafs to win', odds:'-150', opp:'+130', p:'62', game:'TOR-MTL'},
+    {id:nextId++, name:'Example: Over 8.5 runs', odds:'-110', opp:'-110', p:'55', game:'TOR-NYY'}
+  ];
+  render();
+});
+</script>
+</body>
+</html>

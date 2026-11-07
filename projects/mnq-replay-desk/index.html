@@ -87,6 +87,16 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .drawbar{position:absolute;top:8px;right:84px;display:flex;align-items:center;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
 .sw{width:18px;height:18px;border-radius:50%;border:2px solid var(--panel);outline:1px solid var(--line);cursor:pointer;padding:0}
 .sw.on{outline:2px solid var(--fg)}
+.ctxmenu{position:absolute;z-index:30;min-width:236px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.22);padding:5px;display:flex;flex-direction:column}
+.ctxmenu .ctx-head{font-size:11px;color:var(--muted);padding:5px 9px 6px;letter-spacing:.02em}
+.ctxmenu button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;border-radius:5px;padding:0 9px;height:30px;cursor:pointer;font-size:13px;font-weight:500;text-align:left;color:var(--fg)}
+.ctxmenu button:hover,.ctxmenu button:focus-visible{background:var(--raise);outline:none}
+.ctxmenu button i{width:8px;height:8px;border-radius:2px;flex:none;background:var(--line)}
+.ctxmenu button.buy i{background:var(--up)} .ctxmenu button.sell i{background:var(--down)}
+.ctxmenu button.buy b{color:var(--up)} .ctxmenu button.sell b{color:var(--down)}
+.ctxmenu button b{font-weight:600}
+.ctxmenu button span{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ctxmenu hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
 .pickhint{position:absolute;left:50%;bottom:36px;transform:translateX(-50%);background:var(--accent);color:var(--accent-fg);font-weight:600;font-size:12px;padding:5px 10px;border-radius:5px;pointer-events:none}
 
 /* replay strip */
@@ -302,6 +312,7 @@ tr:hover td{background:var(--raise)}
     <canvas id="cv" aria-label="MNQ price chart in replay mode"></canvas>
     <div class="legend" id="legend"></div>
     <div class="drawbar" id="drawbar" hidden></div>
+    <div class="ctxmenu" id="ctxMenu" role="menu" aria-label="Trade at this price" hidden></div>
     <div class="pickhint" id="pickhint" hidden>Click a bar to set the replay point · Esc to cancel</div>
   </main>
 
@@ -353,6 +364,7 @@ tr:hover td{background:var(--raise)}
         <kbd>Ctrl</kbd><span>Hold while drawing to skip snapping</span>
         <kbd>Shift</kbd><span>Hold to keep a line level, or move a drawing sideways only</span>
         <kbd>↺ AUTO</kbd><span>Reset price scale (bottom-right)</span>
+        <kbd>Right-click</kbd><span>One-click trade menu at that price</span>
         <kbd>Ctrl Z</kbd><span>Undo chart change</span>
         <kbd>Ctrl Y</kbd><span>Redo</span>
       </div>
@@ -948,6 +960,7 @@ function render(){
     pillAt(x,ye,`${fmtSPts(opn)} pts  ${fmtSUSD(opn*P.qty*PV)}`,C.fg,C.panel);tags.push([ye,fmtP(P.avg),C.fg,C.panel]);
     if(P.sl!=null){const y=V.yOf(P.sl);hline(y,C.down,[6,4]);pillAt(8,y,`SL ${P.qty}  ${fmtSUSD((P.sl-P.avg)*P.side*P.qty*PV)}  ↕`,C.down,'#fff');tags.push([y,fmtP(P.sl),C.down,'#fff']);V.lines.push({k:'sl',y});}
     if(P.tp!=null){const y=V.yOf(P.tp);hline(y,C.up,[6,4]);pillAt(8,y,`TP ${P.qty}  ${fmtSUSD((P.tp-P.avg)*P.side*P.qty*PV)}  ↕`,C.up,'#fff');tags.push([y,fmtP(P.tp),C.up,'#fff']);V.lines.push({k:'tp',y});}}
+  if(S.ctxP!=null){const y=V.yOf(S.ctxP);hline(y,C.fg,[3,3]);tags.push([y,fmtP(S.ctxP),C.fg,C.panel]);}
   for(const od of S.orders){const y=V.yOf(od.price);hline(y,C.accent,[2,3]);pillAt(8,y,`${od.side>0?'BUY':'SELL'} ${od.type==='LMT'?'LMT':'STP'} ${od.qty}  ↕`,C.accent,C['accent-fg']);tags.push([y,fmtP(od.price),C.accent,C['accent-fg']]);V.lines.push({k:'ord',id:od.id,y});}
   // pick mode / crosshair
   const inPlot=mouse.in&&mouse.x<pw&&mouse.y<ph;
@@ -1104,7 +1117,7 @@ $('#undoBtn').onclick=()=>histStep(-1);$('#redoBtn').onclick=()=>histStep(1);
 let drag=null,creating=null;
 const ptOf=e=>{const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};};
 cv.addEventListener('pointerdown',e=>{
-  if(!LV)return;const{x,y}=ptOf(e);const V=LV;const inPlot=x<V.pw&&y<V.ph;
+  if(!LV||e.button!==0)return;const{x,y}=ptOf(e);const V=LV;const inPlot=x<V.pw&&y<V.ph;
   try{cv.setPointerCapture(e.pointerId);}catch{}
   if(S.picking){if(inPlot){const k=clamp(Math.round(V.iOf(x)),0,V.kc);S.picking=false;updateReplayUI();jumpTo(V.A.end[k],`Replay point set · ${fmtDT(V.A.t[k])}`);}return;}
   if(S.tool!=='cursor'&&inPlot){
@@ -1169,6 +1182,49 @@ cv.addEventListener('wheel',e=>{e.preventDefault();if(!LV)return;const{x,y}=ptOf
   const f=e.deltaY<0?1.12:1/1.12;const ns=clamp(S.spacing*f,1.2,60);const ax=Math.min(x,V.pw);const im=V.iOf(ax);
   S.offset=(im-.5+(V.pw-ax)/ns)-(V.N-1);S.spacing=ns;dirty();},{passive:false});
 function finishCreate(d,before){creating=null;S.selId=d.id;setTool('cursor');renderDrawbar();saveDrawings();if(before)pushDraw('add drawing',before);}
+
+/* ---------- right-click one-click trading ---------- */
+const ticketQty=()=>clamp(Math.round(+$('#qty').value||1),1,99);
+function placeAt(side,type,price){
+  const qty=ticketQty();
+  if(type==='MKT'){const px=rt(lastPx()+side*S.settings.slip*TICK);market(side,qty);toast(`Market ${side>0?'buy':'sell'} ${qty} filled @ ${fmtP(px)}`);return;}
+  S.orders.push({id:uid(),side,qty,type,price:rt(price),slPts:$('#useSL').checked?+$('#slPts').value:null,tpPts:$('#useTP').checked?+$('#tpPts').value:null,setup:$('#setup').value.trim()});
+  toast(`${side>0?'Buy':'Sell'} ${type==='LMT'?'limit':'stop'} ${qty} @ ${fmtP(rt(price))} working`);saveState();tick();}
+function ctxClosePos(){if(!S.pos)return;fill(-S.pos.side,S.pos.qty,lastPx()-S.pos.side*S.settings.slip*TICK,clockT(),S.cursor,{reason:'Manual close'});saveState();tick();}
+function ctxMoveLvl(k,p){if(!S.pos)return;const r=lineRef(k),b=S.pos[k];S.pos[k]=p;saveState();tick();pushLine(r,b,p,k==='sl'?'move stop loss':'move take profit');}
+function ctxHLine(p){const before=cloneD();S.drawings.push({id:uid(),type:'hline',color:defColor('hline'),pts:[{t:Math.round(timeAtIndex(LV,LV.kc)),p}]});saveDrawings();dirty();pushDraw('add drawing',before);}
+let ctxActs=[];
+function openCtx(x,y){
+  const V=LV,p=rt(V.pOf(y)),lp=lastPx(),q=ticketQty(),items=[];
+  if(p<lp){items.push(['buy',`Buy limit ${q}`,p,()=>placeAt(1,'LMT',p)],['sell',`Sell stop ${q}`,p,()=>placeAt(-1,'STP',p)]);}
+  else if(p>lp){items.push(['sell',`Sell limit ${q}`,p,()=>placeAt(-1,'LMT',p)],['buy',`Buy stop ${q}`,p,()=>placeAt(1,'STP',p)]);}
+  if(items.length)items.push('-');
+  items.push(['buy',`Buy market ${q}`,lp,()=>placeAt(1,'MKT')],['sell',`Sell market ${q}`,lp,()=>placeAt(-1,'MKT')]);
+  if(S.pos){const P=S.pos;items.push('-');
+    if((P.side>0&&p<lp)||(P.side<0&&p>lp))items.push(['',`Move stop loss here`,p,()=>ctxMoveLvl('sl',p)]);
+    else if(p!==lp)items.push(['',`Move take profit here`,p,()=>ctxMoveLvl('tp',p)]);
+    items.push(['',`Close ${P.side>0?'long':'short'} ${P.qty}`,null,ctxClosePos]);}
+  if(S.orders.length)items.push(['',`Cancel all orders (${S.orders.length})`,null,()=>{S.orders=[];saveState();tick();toast('Working orders cancelled');}]);
+  items.push('-',['',`Add horizontal line`,p,()=>ctxHLine(p)]);
+  const br=[$('#useSL').checked?`stop ${+$('#slPts').value}`:'no stop',$('#useTP').checked?`target ${+$('#tpPts').value}`:'no target'].join(' · ');
+  ctxActs=[];const m=$('#ctxMenu');
+  m.innerHTML=`<div class="ctx-head">${q} contract${q>1?'s':''} · ${br} pts</div>`+items.map(it=>{if(it==='-')return'<hr>';ctxActs.push(it[3]);
+    return `<button role="menuitem" class="${it[0]}" data-a="${ctxActs.length-1}"><i></i><b>${esc(it[1])}</b>${it[2]!=null?`<span>${fmtP(it[2])}</span>`:''}</button>`;}).join('');
+  S.ctxP=p;m.hidden=false;const W=$('#chartWrap').clientWidth,H=$('#chartWrap').clientHeight;
+  m.style.left=Math.max(4,Math.min(x+2,W-m.offsetWidth-4))+'px';m.style.top=Math.max(4,Math.min(y+2,H-m.offsetHeight-4))+'px';
+  m.querySelector('button').focus({preventScroll:true});dirty();}
+function closeCtx(){const m=$('#ctxMenu');if(m.hidden)return;m.hidden=true;S.ctxP=null;dirty();}
+cv.addEventListener('contextmenu',e=>{e.preventDefault();if(!LV||!S.B)return;
+  if(creating){S.drawings=S.drawings.filter(d=>d!==creating.d);creating=null;setTool('cursor');}
+  if(drag)return;const{x,y}=ptOf(e);if(x>=LV.pw||y>=LV.ph){closeCtx();return;}
+  togglePlay(false);openCtx(x,y);});
+$('#ctxMenu').addEventListener('contextmenu',e=>e.preventDefault());
+$('#ctxMenu').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const fn=ctxActs[+b.dataset.a];closeCtx();fn&&fn();});
+$('#ctxMenu').addEventListener('keydown',e=>{const bs=[...$('#ctxMenu').querySelectorAll('button')],i=bs.indexOf(document.activeElement);
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeCtx();}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:-1)+bs.length)%bs.length].focus();}});
+document.addEventListener('pointerdown',e=>{if(!$('#ctxMenu').contains(e.target))closeCtx();},true);
+cv.addEventListener('wheel',closeCtx,{passive:true});window.addEventListener('resize',closeCtx);
 
 /* ---------- side panel ---------- */
 function updateSide(){

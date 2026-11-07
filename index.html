@@ -116,7 +116,7 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
   </header>
 
   <section class="projects" aria-labelledby="projects-h">
-    <div class="sec-head"><h2 id="projects-h">Projects</h2><span class="eyebrow">3 projects · each runs in your browser</span></div>
+    <div class="sec-head"><h2 id="projects-h">Projects</h2><span class="eyebrow">4 projects · each runs in your browser</span></div>
 
     <article class="project" id="maple-bean">
       <dl class="facts">
@@ -160,6 +160,27 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
       </div>
     </article>
 
+    <article class="project" id="mnq-replay-desk">
+      <dl class="facts">
+        <div><dt>Type</dt><dd>Market replay and backtesting app</dd></div>
+        <div><dt>Data</dt><dd>1-minute Micro Nasdaq futures (MNQ) bars the user imports. The demo loads synthetic sample data.</dd></div>
+        <div><dt>Built with</dt><dd>JavaScript, HTML Canvas, IndexedDB · AI-assisted with Claude</dd></div>
+        <div><dt>Built</dt><dd>November 2026</dd></div>
+      </dl>
+      <div class="story">
+        <h3>MNQ Replay Desk</h3>
+        <p class="lead">A TradingView-style replay simulator for practising futures trades bar by bar, which keeps every result even after jumping to another date.</p>
+        <div class="parts">
+          <div><h4>The problem</h4><p>TradingView's replay mode clears your trades when you change the date or skip ahead, so a practice session can't be reviewed later or compared with others.</p></div>
+          <div><h4>What I built</h4><p>A charting app that replays 1-minute data and builds 5-minute to daily candles from it, simulates market, limit and stop orders with stop-loss and take-profit, and logs every closed trade. It also has drawing tools, VWAP and moving averages, and a focus mode.</p></div>
+          <div><h4>What it shows</h4><ul><li>Time-series aggregation across timeframes and time zones</li><li>Order-fill simulation with commission and slippage</li><li>Trade metrics: win rate, profit factor, expectancy, R-multiple, max drawdown</li><li>CSV import from several platforms, plus CSV export</li></ul></div>
+          <div><h4>Why it matters</h4><p>Every number uses only bars already revealed, so results aren't inflated by future data. Checking the chart against TradingView also caught a 4-hour shift in my data, which I traced to UTC timestamps being read as Eastern time.</p></div>
+        </div>
+        <div class="tools"><span class="tool">JavaScript</span><span class="tool">Canvas charts</span><span class="tool">Time series</span><span class="tool">Backtesting</span><span class="tool">CSV import/export</span></div>
+        <div class="actions"><a class="btn solid" href="projects/mnq-replay-desk/index.html">Open the replay desk →</a><span class="note">Best on a computer</span></div>
+      </div>
+    </article>
+
     <article class="project" id="parlay-lab">
       <dl class="facts">
         <div><dt>Type</dt><dd>Expected-value calculator</dd></div>
@@ -185,15 +206,15 @@ footer{font-size:14px;color:var(--muted);border-top:1px solid var(--line);paddin
   <section class="skills" aria-labelledby="skills-h">
     <div class="sec-head"><h2 id="skills-h">Skills in these projects</h2></div>
     <div class="skill-grid">
-      <div><h3>Analysis</h3><p>KPI design, margin analysis, trend and pattern analysis, probability and expected value</p></div>
-      <div><h3>Data work</h3><p>Cleaning and aggregating raw data with Python, joining sources, exporting CSV for Excel</p></div>
+      <div><h3>Analysis</h3><p>KPI design, margin analysis, trend and pattern analysis, backtest metrics, probability and expected value</p></div>
+      <div><h3>Data work</h3><p>Cleaning and aggregating raw data with Python, rolling up time series across timeframes and time zones, joining sources, exporting CSV for Excel</p></div>
       <div><h3>Communication</h3><p>Dashboards and charts that lead with a clear takeaway, built for people who are not analysts</p></div>
     </div>
   </section>
 
   <footer>
     <span>Gabriel Mosca · Toronto, Ontario</span>
-    <span>Updated October 2026</span>
+    <span>Updated November 2026</span>
   </footer>
 </div>
 

@@ -10,6 +10,7 @@ Personal portfolio site. Plain HTML, CSS and JavaScript, so it runs on GitHub Pa
 | `projects/maple-bean/` | Maple & Bean Q3 sales dashboard |
 | `projects/maple-bean/data/` | The dashboard's 5 CSV files go here (see below) |
 | `projects/replay-log/` | Replay Log trading journal (demo opens with sample sessions) |
+| `projects/mnq-replay-desk/` | MNQ Replay Desk market replay and backtesting app (demo opens with sample data) |
 | `projects/parlay-lab/` | Parlay Lab expected-value calculator |
 
 ## Put it online (about 10 minutes)
